@@ -1,0 +1,71 @@
+﻿@page "/employees/create"
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.EntityFrameworkCore
+@using CrudPracticalExam.Models
+@inject IDbContextFactory<CrudPracticalExam.Data.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Employee</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Employee" OnValidSubmit="AddEmployee" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <span class="text-danger">*</span>
+                <label for="fullname" class="form-label">FullName:</label> 
+                <InputText id="fullname" @bind-Value="Employee.FullName" class="form-control" aria-required="true"/> 
+                <ValidationMessage For="() => Employee.FullName" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <span class="text-danger">*</span>
+                <label for="email" class="form-label">Email:</label> 
+                <InputText id="email" @bind-Value="Employee.Email" class="form-control" aria-required="true"/> 
+                <ValidationMessage For="() => Employee.Email" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <span class="text-danger">*</span>
+                <label for="position" class="form-label">Position:</label> 
+                <InputText id="position" @bind-Value="Employee.Position" class="form-control" aria-required="true"/> 
+                <ValidationMessage For="() => Employee.Position" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="salary" class="form-label">Salary:</label> 
+                <InputNumber id="salary" @bind-Value="Employee.Salary" class="form-control" /> 
+                <ValidationMessage For="() => Employee.Salary" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="datehired" class="form-label">DateHired:</label> 
+                <InputDate id="datehired" @bind-Value="Employee.DateHired" class="form-control" /> 
+                <ValidationMessage For="() => Employee.DateHired" class="text-danger" /> 
+            </div>   
+            <div>
+                <a class="btn btn-secondary" href="/employees"><i class="bi bi-arrow-left"></i>Back to List</a>
+                <button type="submit" class="btn btn-primary float-end">Create</button>
+            </div>
+
+            
+        </EditForm>
+    </div>
+</div>
+
+
+@code {
+    [SupplyParameterFromForm]
+    private Employee Employee { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddEmployee()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Employees.Add(Employee);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/employees");
+    }
+}
